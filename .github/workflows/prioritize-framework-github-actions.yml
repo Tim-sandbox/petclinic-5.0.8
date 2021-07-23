@@ -1,0 +1,50 @@
+# replace .war with .jar or .ear if needed
+name: Whitesource Prioritize Java with Maven
+
+on:
+  push:
+    branches: [ release* ]
+  pull_request:
+    branches: [ release* ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v2
+        with:
+          java-version: 1.8
+      - name: Build with Maven
+        run: mvn clean package -DskipTests=true
+      - name: WhiteSource Unified Agent Scan
+        env:
+          WS_APIKEY: ${{secrets.APIKEY}}
+          WS_USERKEY: ${{secrets.USERKEY}}
+          WS_PRODUCTNAME: GH_${{github.event.repository.name}}
+          WS_PROJECTNAME: ${{github.ref}}_Prioritize
+          WS_ENABLEIMPACTANALYSIS: true
+          WS_REQUIREKNOWNSHA1: false
+          WS_RESOLVEALLDEPENDENCIES: false
+          WS_MAVEN_RESOLVEDEPENDENCIES: true
+          WS_MAVEN_AGGREGATEMODULES: true
+          WS_FILESYSTEMSCAN: false
+          WS_GENERATEPROJECTDETAILSJSON: true
+        run: |
+          curl -LJO https://unified-agent.s3.amazonaws.com/wss-unified-agent.jar
+          cat <<EOF > frameworks.txt
+          org.springframework:spring-web
+          org.springframework:spring-core
+          EOF
+          cat frameworks.txt
+          echo Unified Agent downloaded successfully
+          WARFILE=$(find ./ -type f -wholename "*/target/*.war")
+          export WS_ANALYZEFRAMEWORKS=true
+          export WS_FILESYSTEMSCAN=false
+          export WS_ANALYZEFRAMEWORKSREFERENCE=./frameworks.txt
+          java -jar wss-unified-agent.jar -appPath $WARFILE -d ./ -product GH_${{ github.event.repository.name }} -project ${{ github.ref }}_PrioritizeFramework
+  © 2021 GitHub, Inc.
+  © 2021 GitHub, Inc.
