@@ -38,7 +38,7 @@ jobs:
         run: |
           curl -LJO https://unified-agent.s3.amazonaws.com/wss-unified-agent.jar
           cat <<EOF > frameworks.txt
-         org.springframework:spring-web
+          org.springframework:spring-web
           org.springframework:spring-core
           EOF
           cat frameworks.txt
