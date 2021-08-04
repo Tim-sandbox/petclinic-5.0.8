@@ -26,6 +26,7 @@ jobs:
           WS_USERKEY: ${{secrets.USERKEY}}
           WS_PRODUCTNAME: GH_${{github.event.repository.name}}
           WS_PROJECTNAME: ${{github.ref}}_Prioritize
+          WS_PROJECTVERSION: 2
           WS_ENABLEIMPACTANALYSIS: true
           WS_REQUIREKNOWNSHA1: false
           WS_RESOLVEALLDEPENDENCIES: false
@@ -35,16 +36,15 @@ jobs:
           WS_GENERATEPROJECTDETAILSJSON: true
         run: |
           curl -LJO https://unified-agent.s3.amazonaws.com/wss-unified-agent.jar
-          cat <<EOF > frameworks.txt
-          org.springframework:spring-web
-          org.springframework:spring-core
-          EOF
-          cat frameworks.txt
+#          cat <<EOF > frameworks.txt
+#         org.springframework:spring-web
+#          org.springframework:spring-core
+#          EOF
+#          cat frameworks.txt
           echo Unified Agent downloaded successfully
           WARFILE=$(find ./ -type f -wholename "*/target/*.war")
-          export WS_ANALYZEFRAMEWORKS=true
+#          export WS_ANALYZEFRAMEWORKS=true
           export WS_FILESYSTEMSCAN=false
-          export WS_ANALYZEFRAMEWORKSREFERENCE=./frameworks.txt
+#          export WS_ANALYZEFRAMEWORKSREFERENCE=./frameworks.txt
           java -jar wss-unified-agent.jar -appPath $WARFILE -d ./ -product GH_${{ github.event.repository.name }} -project ${{ github.ref }}_PrioritizeFramework
-  © 2021 GitHub, Inc.
-  © 2021 GitHub, Inc.
+
